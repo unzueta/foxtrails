@@ -1,5 +1,5 @@
 # foxtrails
-Fork from www.foxtrais.org.
+Fork from www.foxtrails.org.
 
 Original source code from Bryan Marquis.
 
