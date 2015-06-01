@@ -1,0 +1,180 @@
+      var side_bar_html = "";
+      var gmarkers = [];
+      var agents = [];
+      var htmls = [];
+      // arrays to hold variants of the info window html with get direction forms open
+      var to_htmls = [];
+      var from_htmls = [];
+      var reasons=[];
+      var gdir = {};
+      var map = {};
+
+    Event.observe(window,"load",function() {
+    if (GBrowserIsCompatible()) {
+
+      // create the map
+      map = new GMap2(document.getElementById("map"));
+      map.addControl(new GLargeMapControl());
+      map.addControl(new GMapTypeControl());
+      map.checkResize();
+      // === create a GDirections Object ===
+      gdir=new GDirections(map, document.getElementById("directions"));
+
+      // === Array for decoding the failure codes ===
+      reasons[G_GEO_SUCCESS]            = "Success";
+      reasons[G_GEO_MISSING_ADDRESS]    = "Missing Address: The address was either missing or had no value.";
+      reasons[G_GEO_UNKNOWN_ADDRESS]    = "Unknown Address:  No corresponding geographic location could be found for the specified address.";
+      reasons[G_GEO_UNAVAILABLE_ADDRESS]= "Unavailable Address:  The geocode for the given address cannot be returned due to legal or contractual reasons.";
+      reasons[G_GEO_BAD_KEY]            = "Bad Key: The API key is either invalid or does not match the domain for which it was given";
+      reasons[G_GEO_TOO_MANY_QUERIES]   = "Too Many Queries: The daily geocoding quota for this site has been exceeded.";
+      reasons[G_GEO_SERVER_ERROR]       = "Server error: The geocoding request could not be successfully processed.";
+      reasons[G_GEO_BAD_REQUEST]        = "A directions request could not be successfully parsed.";
+      reasons[G_GEO_MISSING_QUERY]      = "No query was specified in the input.";
+      reasons[G_GEO_UNKNOWN_DIRECTIONS] = "The GDirections object could not compute directions between the points.";
+
+      // === catch Directions errors ===
+      GEvent.addListener(gdir, "error", function() {
+        var code = gdir.getStatus().code;
+        var reason="Code "+code;
+        if (reasons[code]) {
+          reason = reasons[code]
+        } 
+        alert("Failed to obtain directions, "+reason);
+      });
+      GEvent.addListener(gdir, "load", function() {
+	map.closeInfoWindow();
+      });
+
+	<%
+	SELECT offices
+	GO TOP
+	lcComma = ""
+	SCAN FOR !EMPTY(lat)
+	%>
+   	    createMarker({
+      		name: '<<STRTRAN(TRIM(dept_desc),"'","\'")>>',
+      		html: '<p><b><<STRTRAN(TRIM(dept_desc),"'","\'")>></b><br><<IIF(EMPTY(address_1),"",trim(address_1)+"<br/>")>><<IIF(EMPTY(address_2),"",trim(address_2)+"<br/>")>><<trim(city)>>, <<trim(state)>> <<zip>><br/><<IIF(phone=0,"",transform(phone,"(###) ###-####"))>></p>',
+      		lon: <<TRIM(lon)>>,lat:<<TRIM(lat)>>,
+		city: '<<trim(city)>>'
+   	    });
+	<% ENDSCAN %>
+           map.setCenter(gmarkers[0].point, 9);
+    }
+
+    else {
+      alert("Sorry, the Google Maps API is not compatible with this browser");
+    }
+
+    // This Javascript is based on code provided by the
+    // Blackpool Community Church Javascript Team
+    // http://www.commchurch.freeserve.co.uk/   
+    // http://econym.googlepages.com/index.htm
+    });
+
+      // A function to create the marker and set up the event window
+      function createMarker(agent) {
+        agent.point = new GLatLng(agent.lat,agent.lon);
+        var marker = new GMarker(agent.point);
+	marker.point = agent.point;
+	var html = agent.html;
+        var i = gmarkers.length;
+
+        // The info window version with the "to here" form open
+        to_htmls[i] = html + '<br>Directions: <b>To here<\/b> - <a href="javascript:fromhere(' + i + ')">From here<\/a>' +
+           '<br>Start address:<form action="javascript:getDirections('+i+')">' +
+           '<input type="text" SIZE=40 MAXLENGTH=40 name="saddr" id="saddr" value="" /><br>' +
+           '<INPUT value="Get Directions" TYPE="SUBMIT"><br>' +
+           'Walk <input type="checkbox" name="walk" id="walk" /> &nbsp; Avoid Highways <input type="checkbox" name="highways" id="highways" />' +
+           '<input type="hidden" id="daddr" value="'+agent.name+"@"+ agent.point.lat() + ',' + agent.point.lng() + 
+           '"/>';
+        // The info window version with the "from here" form open
+        from_htmls[i] = html + '<br>Directions: <a href="javascript:tohere(' + i + ')">To here<\/a> - <b>From here<\/b>' +
+           '<br>End address:<form action="javascript:getDirections()">' +
+           '<input type="text" SIZE=40 MAXLENGTH=40 name="daddr" id="daddr" value="" /><br>' +
+           '<INPUT value="Get Directions" TYPE="SUBMIT"><br>' +
+           'Walk <input type="checkbox" name="walk" id="walk" /> &nbsp; Avoid Highways <input type="checkbox" name="highways" id="highways" />' +
+           '<input type="hidden" id="saddr" value="'+agent.name+"@"+ agent.point.lat() + ',' + agent.point.lng() +
+           '"/>';
+        // The inactive version of the direction info
+        html = html + '<br>Directions: <a href="javascript:tohere('+i+')">To here<\/a> - <a href="javascript:fromhere('+i+')">From here<\/a>';
+
+        GEvent.addListener(marker, "click", function() {
+          marker.openInfoWindowHtml(html);
+        });
+        // save the info we need to use later for the side_bar
+        gmarkers.push(marker);
+	agents.push(agent);
+        htmls[i] = html;
+        return marker;
+      }
+      
+      // ===== request the directions =====
+      function getDirections(i) {
+        // ==== Set up the walk and avoid highways options ====
+        var opts = {};
+        if (document.getElementById("walk").checked) {
+           opts.travelMode = G_TRAVEL_MODE_WALKING;
+        }
+        if (document.getElementById("highways").checked) {
+           opts.avoidHighways = true;
+        }
+        // ==== set the start and end locations ====
+        var saddr = document.getElementById("saddr").value
+        var daddr = document.getElementById("daddr").value
+        gdir.load("from: "+saddr+" to: "+daddr, opts);
+      }
+
+
+      // This function picks up the click and opens the corresponding info window
+      function geoSearch() {
+	var zipcode = $F('zipcode');
+	var miles = parseInt($F('miles'));
+	side_bar_html = "";
+	if (zipcode.length > 0) {
+	  // geocode zipcode
+	  var geocoder = new GClientGeocoder();
+  	  geocoder.getLatLng(
+    	    zipcode,
+    	    function(geoPoint) {
+      	      if (geoPoint) {
+          	  point = geoPoint;
+	      } else {
+	  	  point = gmarkers[0].getPoint();
+	      }
+	      map.clearOverlays();
+	      for (var j = 0; j < gmarkers.length; j++) {
+	        var distKm=gmarkers[j].getPoint().distanceFrom(point)/1000;
+	        var distMiles = distKm * 0.621371;
+	        if (distMiles <= miles) {
+		  map.addOverlay(gmarkers[j]);
+        	  side_bar_html += '<a href="javascript:myclick(' + j + ')">' + agents[j].name + '<\/a><br>';
+	        }
+	      }
+	      switch (miles) {
+		case 1: newZoom = 14; break;
+		case 5: newZoom = 12; break;
+		case 10: newZoom = 10; break;
+		case 25: newZoom = 9; break;
+		case 50: newZoom = 8; break;
+		default: newZoom = 7; break;
+	      }
+	      map.setCenter(point,newZoom);
+              document.getElementById("side_bar").innerHTML = side_bar_html;
+	      document.getElementById("directions").innerHTML = '<hr/>';
+    	    }
+  	  );
+	}
+      }
+      function myclick(i) {
+	map.setCenter(gmarkers[i].point,15);
+        gmarkers[i].openInfoWindowHtml(htmls[i]);
+	document.getElementById("directions").innerHTML = '<hr/>';
+      }
+
+      // functions that open the directions forms
+      function tohere(i) {
+        gmarkers[i].openInfoWindowHtml(to_htmls[i]);
+      }
+      function fromhere(i) {
+        gmarkers[i].openInfoWindowHtml(from_htmls[i]);
+      }

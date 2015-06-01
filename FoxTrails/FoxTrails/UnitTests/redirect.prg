@@ -1,0 +1,2 @@
+PARAMETERS lcController
+RETURN .t.

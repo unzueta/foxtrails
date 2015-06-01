@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+<title>Demo Greeting</title>
+<script type="text/javascript" src="<<webroot()+"/lib/prototype.js">>"></script>
+<script type="text/javascript" src="<<webroot()+"/lib/helpers.js">>"></script>
+<script type="text/javascript">
+function onPageLoad() {
+	new Ajax.Request("<<fullurl("/car/year")>>", {
+		method: 'get',
+		onComplete: function(transport) {
+			updateSelect('_year',transport);
+		}
+	});
+
+	$('_year').onchange = function() {
+		new Ajax.Request("<<fullurl("/car/make/")>>"+$F('_year'), {
+				method: 'get',
+				onComplete: function(transport) {
+					updateSelect('_make',transport);
+			}
+		});
+	}
+
+	$('_make').onchange = function() {
+		new Ajax.Request("<<fullurl("/car/model/")>>"+$F('_year')+"/"+$F('_make'), {
+				method: 'get',
+				onComplete: function(transport) {
+					updateSelect('_model',transport);
+			}
+		});
+	}
+}
+
+</script>
+</head>
+<body onload="onPageLoad();">
+<% IF oDispatchContext.hasErrors() %>
+<div class="error">
+<% FOR EACH cError IN oDispatchContext.Errors %>
+<p><<cError>></p>
+<% NEXT %>
+</div>
+<% ENDIF %>
+Year <select id="_year"></select><br />
+Make <select id="_make"></select><br />
+Model <select id="_model"></select>
+</body>
+</html>

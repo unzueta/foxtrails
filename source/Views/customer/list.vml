@@ -1,0 +1,15 @@
+<div id="results">
+<table>
+<%
+SELECT CurCustomers
+SCAN
+%>
+<tr><td>
+  <<linkto("/customer/edit/"+curCustomers.customerid,CurCustomers->Companynam)>>
+</td></tr>
+<%
+ENDSCAN
+%>
+</table>
+<p><<linkto("/customer/add","Add new customer")>></p>
+</div>

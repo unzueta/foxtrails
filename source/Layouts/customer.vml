@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+<title>Demo Greeting</title>
+<script type="text/javascript" src="<<webroot()>>/lib/prototype.js"></script>
+<script type="text/javascript" src="<<webroot()>>/lib/effects.js"></script>
+<script type="text/javascript" src="<<webroot()>>/lib/calendarview.js"></script>
+<link rel="stylesheet" href="<<webroot()>>/css/calendarview.css" />
+<script type="text/javascript" src="<<webroot()>>/lib/date.js"></script>
+<script type="text/javascript" src="<<webroot()>>/lib/dateparse.js"></script>
+</head>
+<body>
+<% IF oDispatchContext.hasErrors() %>
+<div class="error">
+<% FOR EACH cError IN oDispatchContext.Errors %>
+<p><<cError>></p>
+<% NEXT %>
+</div>
+<% ENDIF %>
+<% IF lower(.renderAction) $ "search|list" %>
+<form id="searchform" action="<<fullurl("/customer/list")>>" method="post">
+      <p>
+      Company: <input type="text" name="_ccriteria" id="_ccriteria" value="<<customer.criteria>>"/> <input type="submit" id="search" value="Search"/>
+      </p>
+</form>
+<% ENDIF %>
+<< oDispatchContext.renderedView >>
+</body>
+</html>

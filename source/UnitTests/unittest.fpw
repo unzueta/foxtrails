@@ -1,0 +1,4 @@
+RESOURCE=OFF
+EXCLUSIVE=OFF
+PATH = "c:\foxunit"
+_STARTUP=C:\foxunit\fxu.prg

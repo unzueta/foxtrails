@@ -1,0 +1,8 @@
+SET STEP ON
+DO batch_geo.prg
+
+USE offices.dbf
+lcJson = RenderVml("map.js.vml",null)
+STRTOFILE(lcJson,"map.js")
+
+DO FORM FoxGeo

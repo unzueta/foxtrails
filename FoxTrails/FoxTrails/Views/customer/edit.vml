@@ -1,0 +1,11 @@
+<div id="results">
+<form action="<<fullurl("/customer/save")>>" method="post">
+<table>
+<% SELECT customers
+FOR i = 1 TO FCOUNT("customers")%>
+<< fieldfor( "customers."+field(i) ) >>
+<% ENDFOR%>
+<tr><td><input type="submit" value="Save"/> <input type="button" value="Delete" onclick="document.location='<<fullurl("/customer/delete/?customerid="+customers.customerid)>>';"/></td></tr>
+</table>
+</form>
+</div>

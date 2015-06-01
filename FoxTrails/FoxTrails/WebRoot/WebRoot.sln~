@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\WebRoot\", "..\..\..\..\..\..\clients\foxusergroup\VFPOnRails\WebRoot\", "{A413ADB7-89F5-4F95-8C64-751BC7BACC5F}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.VirtualPath = "/WebRoot"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\clients\foxusergroup\VFPOnRails\WebRoot\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\WebRoot\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/WebRoot"
+		Release.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\clients\foxusergroup\VFPOnRails\WebRoot\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\WebRoot\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "1704"
+		DefaultWebSiteLanguage = "Visual Basic"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A413ADB7-89F5-4F95-8C64-751BC7BACC5F}.Debug|.NET.ActiveCfg = Debug|.NET
+		{A413ADB7-89F5-4F95-8C64-751BC7BACC5F}.Debug|.NET.Build.0 = Debug|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
